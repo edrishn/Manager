@@ -38,6 +38,9 @@ const useStyles = makeStyles((theme) => ({
   listItem: {
     alignItems: "start",
   },
+  listItemText: {
+    maxWidth: 250,
+  },
   roleBox: {
     display: "flex",
     flexDirection: "column",
@@ -245,7 +248,11 @@ export default function UserManager() {
               <ListItemIcon>
                 <AccountCircleIcon />
               </ListItemIcon>
-              <ListItemText id={user.name} primary={user.name} />
+              <ListItemText
+                id={user.name}
+                primary={user.name}
+                className={classes.listItemText}
+              />
               <div className={classes.roleBox}>
                 <div>
                   {user.roles.map((role: string) => (
