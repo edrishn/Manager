@@ -32,6 +32,16 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
+  chip: {
+    margin: 4,
+  },
+  listItem: {
+    alignItems: "start",
+  },
+  roleBox: {
+    display: "flex",
+    flexDirection: "column",
+  },
 }));
 
 export default function UserManager() {
@@ -231,47 +241,60 @@ export default function UserManager() {
       <List>
         {users.map((user: any) => {
           return (
-            <ListItem key={user.name}>
+            <ListItem key={user.name} className={classes.listItem}>
               <ListItemIcon>
                 <AccountCircleIcon />
               </ListItemIcon>
               <ListItemText id={user.name} primary={user.name} />
-              {user.roles.map((role: string) => (
-                <Chip
-                  key={role}
-                  color="primary"
-                  onDelete={() => handleRoleDelete(user, role)}
-                  label={role}
-                />
-              ))}
-              {user.staffs.map((staff: any) => {
-                let items = [];
-                items.push(
-                  <Chip
-                    key={staff.name}
-                    color="secondary"
-                    onDelete={() => handleStaffDelete(user, staff)}
-                    label={staff.name}
-                  />
-                );
-                staff.roles.map((role: any) =>
-                  items.push(
+              <div className={classes.roleBox}>
+                <div>
+                  {user.roles.map((role: string) => (
                     <Chip
-                      key={staff.name + "-" + role}
+                      key={role}
                       color="primary"
-                      onDelete={() => handleStaffRoleDelete(user, staff, role)}
+                      onDelete={() => handleRoleDelete(user, role)}
                       label={role}
+                      className={classes.chip}
                     />
-                  )
-                );
-                return items;
-              })}
-              <IconButton onClick={(e) => handleAddRoleClick(e, user)}>
-                <AddCircleIcon />
-              </IconButton>
-              <IconButton onClick={(e) => handleAddStaffClick(e, user)}>
-                <AddCircleIcon />
-              </IconButton>
+                  ))}
+
+                  <IconButton onClick={(e) => handleAddRoleClick(e, user)}>
+                    <AddCircleIcon />
+                  </IconButton>
+                </div>
+                <div>
+                  {user.staffs.map((staff: any) => {
+                    let items = [];
+                    items.push(
+                      <Chip
+                        key={staff.name}
+                        color="secondary"
+                        onDelete={() => handleStaffDelete(user, staff)}
+                        label={staff.name}
+                        className={classes.chip}
+                      />
+                    );
+                    staff.roles.map((role: any) =>
+                      items.push(
+                        <Chip
+                          key={staff.name + "-" + role}
+                          color="primary"
+                          onDelete={() =>
+                            handleStaffRoleDelete(user, staff, role)
+                          }
+                          label={role}
+                          className={classes.chip}
+                        />
+                      )
+                    );
+                    return <div>{items}</div>;
+                  })}
+
+                  <IconButton onClick={(e) => handleAddStaffClick(e, user)}>
+                    <AddCircleIcon />
+                  </IconButton>
+                </div>
+              </div>
             </ListItem>
           );
         })}
