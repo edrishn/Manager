@@ -50,132 +50,133 @@ const useStyles = makeStyles((theme) => ({
 export default function UserManager() {
   const classes = useStyles();
 
-  let allRoles = [
-    { name: "Admin" },
-    { name: "Developer" },
-    { name: "Manager" },
-  ];
-  // let allRoles = ["Admin", "Developer", "Manager"];
-  // let allStaffs = ["Modir Mali", "Modir Fanni", "Modir ManabeEnsani"]
-  let allStaffs = [
-    { name: "Modir Mali", roles: [""] },
-    { name: "Modir Fanni", roles: [""] },
-    { name: "Modir ManabeEnsani", roles: [""] },
-  ];
-
-  // const[users, setUsers] = useState([{name:"Joe",roles:["Admin","Developer"]},{name:"Matthew",roles:["Manager"]}])
-  const [users, setUsers] = useState([
-    { name: "", roles: [""], staffs: [{ name: "", roles: [""] }] },
-  ]);
-  const [anchorElRole, setAnchorElRole] = useState(null);
-  const [anchorElStaff, setAnchorElStaff] = useState(null);
-  const [selectedUser, setSelectedUser] = useState({
-    name: "",
-    roles: [""],
-    staffs: [{ name: "", roles: [""] }],
-  });
-  const [roles, setRoles] = useState(allRoles);
-  const [openModal, setOpenModal] = useState(false);
-  const [inviteResponse, setInviteResponse] = useState(null);
-  const [staffs, setStaffs] = useState(allStaffs);
-
   useEffect(() => {
-    getUsers();
-
-    Axios.get("/getRoles").then((res) => {
-      setRoles(res.data);
-      allRoles = res.data;
-    });
-
-    Axios.get("/getStaffs").then((res) => {
-      setStaffs(res.data);
-      allStaffs = res.data;
+    Axios.get("/Reset").then((res) => {
+      console.log("Reset");
+      Axios.get("/GetUsers").then((res) => {
+        setAllUsers(res.data);
+        setUsers(res.data);
+        Axios.get("/GetRoles").then((res) => {
+          setRoles(res.data);
+          setAllRoles(res.data);
+          setLoadAddRole(true);
+          Axios.get("/GetStaffs").then((res) => {
+            setStaffs(res.data);
+            setLoadAddStaff(true);
+            setAllStaffs(res.data);
+          });
+        });
+      });
     });
   }, []);
 
-  function getUsers() {
-    Axios.get("/getUsers").then((res) => {
-      setUsers(res.data);
-    });
-  }
+  const [users, setUsers] = useState([] as any);
+  const [allUsers, setAllUsers] = useState([] as any);
+  const [anchorElRole, setAnchorElRole] = useState(null);
+  const [anchorElStaff, setAnchorElStaff] = useState(null);
+  const [selectedUser, setSelectedUser] = useState({} as any);
+  const [roles, setRoles] = useState([] as any);
+  const [allRoles, setAllRoles] = useState([] as any);
+  const [openModal, setOpenModal] = useState(false);
+  const [inviteResponse, setInviteResponse] = useState(null);
+  const [staffs, setStaffs] = useState([] as any);
+  const [allStaffs, setAllStaffs] = useState([] as any);
+  const [loadAddRole, setLoadAddRole] = useState(false);
+  const [loadAddStaff, setLoadAddStaff] = useState(false);
 
   const handleAddRoleClick = (event: any, user: any) => {
     setAnchorElRole(event.currentTarget);
     setSelectedUser(user);
-    let filteredRoles = allRoles.filter((role) => !user.roles.includes(role));
+    let filteredRoles = allRoles.filter(
+      (role: any) => !user.roles.includes(role)
+    );
     setRoles(filteredRoles);
   };
 
   const handleRoleDelete = (user: any, role: any) => {
-    console.log("Role Deleted", user);
     let newUsers = [...users];
-    let targetUser = newUsers.filter((item) => item.name === user.name);
-    let index = targetUser[0].roles.indexOf(role);
+    let targetUser = newUsers.find((item) => item.id === user.id);
+    let targetUserIndex = newUsers.findIndex((item) => item.id === user.id);
+    let roleIndex = targetUser.roles.indexOf(role);
+    targetUser.roles.splice(roleIndex, 1);
+    newUsers.splice(targetUserIndex, 1);
+    newUsers.push(targetUser);
 
-    Axios.patch(`RemoveRole/${targetUser[0].name}`, index).then(() => {
-      getUsers();
+    Axios.put(`/RemoveUserRole?id=${user.id}&role=${role}`).then(() => {
+      setUsers(newUsers);
     });
   };
 
   const handleRoleItemClick = (role: string, user: any) => {
     let newUsers = [...users];
-    let targetUser = newUsers.filter((item) => item.name === user.name);
-    // targetUser[0].roles.push(role);
-    setSelectedUser(targetUser[0]);
-    // setUsers(newUsers);
-    Axios.patch(`/AddRole/${targetUser[0].name}`, {
-      user: targetUser[0],
-      role: role,
-    }).then(() => {
-      getUsers();
+    let targetUser = newUsers.find((item) => item.id === user.id);
+    let targetUserIndex = newUsers.findIndex((item) => item.id === user.id);
+    targetUser.roles.push(role);
+    newUsers.splice(targetUserIndex, 1);
+    newUsers.push(targetUser);
+    Axios.post(`/AddUserRole?id=${user.id}&role=${role}`).then(() => {
+      setUsers(newUsers);
+      setSelectedUser(targetUser);
+      setAnchorElRole(null);
     });
-    setAnchorElRole(null);
   };
 
   const handleAddStaffClick = (event: any, user: any) => {
     setAnchorElStaff(event.currentTarget);
     setSelectedUser(user);
     let filteredStaffs = allStaffs.filter(
-      (staff) => !user.staffs.includes(staff)
+      (staff: any) => !user.staffs.includes(staff)
     );
     setStaffs(filteredStaffs);
   };
 
   const handleStaffDelete = (user: any, staff: any) => {
     let newUsers = [...users];
-    let targetUser = newUsers.filter((item) => item.name === user.name);
-    let index = targetUser[0].staffs.indexOf(staff);
-
-    Axios.patch(`RemoveStaff/${targetUser[0].name}`, index).then(() => {
-      getUsers();
+    let targetUser = newUsers.find((item) => item.id === user.id);
+    let targetUserIndex = newUsers.findIndex((item) => item.id === user.id);
+    let staffIndex = targetUser.staffs.indexOf(staff);
+    targetUser.staffs.splice(staffIndex, 1);
+    newUsers.splice(targetUserIndex, 1);
+    newUsers.push(targetUser);
+    Axios.put(`/RemoveUserStaff?id=${user.id}&staffId=${staff.id}`).then(() => {
+      setUsers(newUsers);
     });
   };
 
   const handleStaffRoleDelete = (user: any, staff: any, role: any) => {
     let newUsers = [...users];
-    let targetUser = newUsers.filter((item) => item.name === user.name);
-    let index = targetUser[0].staffs.indexOf(staff);
-    Axios.patch(`/RemoveStaffRole/${targetUser[0].name}`, {
-      role: role,
-      index: index,
-    }).then(() => {
-      getUsers();
+    let targetUser = newUsers.find((item) => item.id === user.id);
+    let staffIndex = targetUser.staffs.indexOf(staff);
+    let targetUserIndex = newUsers.findIndex((item) => item.id === user.id);
+    let staffRoleIndex = targetUser.staffs[staffIndex].roles.findIndex(
+      (item: any) => item === role
+    );
+    targetUser.staffs[staffIndex].roles.splice(staffRoleIndex, 1);
+    newUsers.splice(targetUserIndex, 1);
+    newUsers.push(targetUser);
+
+    Axios.put(
+      `/DenyStaffRole?id=${user.id}&staffId=${staff.id}&role=${role}`
+    ).then(() => {
+      setUsers(newUsers);
     });
   };
 
   const handleStaffItemClick = (staff: string, user: any) => {
     let newUsers = [...users];
-    let targetUser = newUsers.filter((item) => item.name === user.name);
-    // targetUser[0].roles.push(role);
-    setSelectedUser(targetUser[0]);
-    // setUsers(newUsers);
-    Axios.patch(`/AddStaff/${targetUser[0].name}`, {
-      user: targetUser[0],
-      staff: staff,
-    }).then(() => {
-      getUsers();
-    });
-    setAnchorElStaff(null);
+    let targetUser = newUsers.find((item) => item.id === user.id);
+    let targetUserIndex = newUsers.findIndex((item) => item.id === user.id);
+    let targetStaff = allStaffs.find((item: any) => item.name === staff);
+    targetUser.staffs.push(targetStaff);
+    newUsers.splice(targetUserIndex, 1);
+    newUsers.push(targetUser);
+    Axios.post(`/AddUserStaff?id=${user.id}&staffId=${targetStaff!.id}`).then(
+      () => {
+        setSelectedUser(targetUser[0]);
+        setUsers(newUsers);
+        setAnchorElStaff(null);
+      }
+    );
   };
 
   const handlePopoverClose = () => {
@@ -183,14 +184,26 @@ export default function UserManager() {
     setAnchorElStaff(null);
   };
 
-  const handleSearch = (e: any) => {
+  const handleSearchRole = (e: any) => {
     let newRoles = [...allRoles];
     let matchedRoles = newRoles.filter(
-      (role) =>
+      (role: any) =>
         role.name.toLowerCase().includes(e.currentTarget.value.toLowerCase()) &&
         !selectedUser.roles.includes(role.name)
     );
     setRoles(matchedRoles);
+  };
+
+  const handleSearchStaff = (e: any) => {
+    let newStaffs = [...allStaffs];
+    let matchedStaffs = newStaffs.filter(
+      (staff: any) =>
+        staff.name
+          .toLowerCase()
+          .includes(e.currentTarget.value.toLowerCase()) &&
+        !selectedUser.staffs.find((item: any) => item.id === staff.id)
+    );
+    setStaffs(matchedStaffs);
   };
 
   const handleInviteClick = () => {
@@ -203,11 +216,19 @@ export default function UserManager() {
   };
 
   const handleInviteNewUserChange = (newUser: any) => {
-    let data = { name: newUser.Username, roles: [], mobile: newUser.Mobile };
+    let data = { name: newUser.Username, mobile: newUser.Mobile };
 
     Axios.post("/AddUser", data).then((response) => {
-      getUsers();
-      console.log("response: ", response);
+      let addedUser = {
+        id: response.data.id,
+        name: newUser.Username,
+        roles: [],
+        staffs: [],
+        mobile: newUser.Mobile,
+      };
+      let newUsers = [...users];
+      newUsers.push(addedUser);
+      setUsers(newUsers);
       setInviteResponse(response.data);
     });
   };
@@ -265,9 +286,11 @@ export default function UserManager() {
                     />
                   ))}
 
-                  <IconButton onClick={(e) => handleAddRoleClick(e, user)}>
-                    <AddCircleIcon />
-                  </IconButton>
+                  {loadAddRole && (
+                    <IconButton onClick={(e) => handleAddRoleClick(e, user)}>
+                      <AddCircleIcon />
+                    </IconButton>
+                  )}
                 </div>
                 <div>
                   {user.staffs.map((staff: any) => {
@@ -297,38 +320,23 @@ export default function UserManager() {
                     return <div>{items}</div>;
                   })}
 
-                  <IconButton onClick={(e) => handleAddStaffClick(e, user)}>
-                    <AddCircleIcon />
-                  </IconButton>
+                  {loadAddStaff && (
+                    <IconButton onClick={(e) => handleAddStaffClick(e, user)}>
+                      <AddCircleIcon />
+                    </IconButton>
+                  )}
                 </div>
               </div>
             </ListItem>
           );
         })}
 
-        {/*<Popover open={openAddRolePopover} anchorOrigin={{vertical: 'bottom',horizontal: 'center'}} anchorEl={anchorElRole} onClose={handlePopoverClose}>*/}
-        {/*    <div>*/}
-        {/*        <InputBase  onChange={handleSearch} placeholder="Role"/>*/}
-        {/*        <IconButton>*/}
-        {/*            <SearchIcon />*/}
-        {/*        </IconButton>*/}
-        {/*        <List>*/}
-        {/*            {roles.map(role => {*/}
-        {/*                return(*/}
-        {/*                    <ListItem key={role} onClick={() =>handleRoleItemClick(role, selectedUser)}>*/}
-        {/*                        <ListItemText id={role} primary={role} />*/}
-        {/*                    </ListItem>*/}
-        {/*                )*/}
-        {/*            })}*/}
-        {/*        </List>*/}
-        {/*    </div>*/}
-        {/*</Popover>*/}
         {openAddRolePopover ? (
           <AddPopover
             open={openAddRolePopover}
             anchorEl={anchorElRole}
             onClose={handlePopoverClose}
-            onChange={handleSearch}
+            onChange={handleSearchRole}
             data={roles}
             inputPlaceHolder="Role"
             onItemClick={handleRoleItemClick}
@@ -340,30 +348,13 @@ export default function UserManager() {
             open={openAddStaffPopover}
             anchorEl={anchorElStaff}
             onClose={handlePopoverClose}
-            onChange={handleSearch}
+            onChange={handleSearchStaff}
             data={staffs}
             inputPlaceHolder="Staff"
             onItemClick={handleStaffItemClick}
             selectedUser={selectedUser}
           />
         ) : null}
-        {/*<Popover open={openAddStaffModal} anchorOrigin={{vertical: 'bottom',horizontal: 'center'}} anchorEl={anchorElStaff} onClose={handlePopoverClose}>*/}
-        {/*    <div>*/}
-        {/*        <InputBase  onChange={handleSearch} placeholder="Staff"/>*/}
-        {/*        <IconButton>*/}
-        {/*            <SearchIcon />*/}
-        {/*        </IconButton>*/}
-        {/*        <List>*/}
-        {/*            {staffs.map(staff => {*/}
-        {/*                return(*/}
-        {/*                    <ListItem key={staff} onClick={() =>handleStaffItemClick(staff, selectedUser)}>*/}
-        {/*                        <ListItemText id={staff} primary={staff} />*/}
-        {/*                    </ListItem>*/}
-        {/*                )*/}
-        {/*            })}*/}
-        {/*        </List>*/}
-        {/*    </div>*/}
-        {/*</Popover>*/}
       </List>
     </div>
   );

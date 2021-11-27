@@ -46,5 +46,6 @@
   "devDependencies": {
     "miragejs": "^0.1.41",
     "prettier": "^2.4.1"
-  }
+  },
+  "proxy": "https://sloy9.sse.codesandbox.io"
 }
