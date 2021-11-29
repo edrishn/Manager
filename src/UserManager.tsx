@@ -7,6 +7,7 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
+import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
 import IconButton from "@material-ui/core/IconButton";
 import Popover from "@material-ui/core/Popover";
 import SearchIcon from "@material-ui/icons/Search";
@@ -143,20 +144,39 @@ export default function UserManager() {
     });
   };
 
-  const handleStaffRoleDelete = (user: any, staff: any, role: any) => {
+  const handleDenyStaffRole = (user: any, staff: any, role: any) => {
     let newUsers = [...users];
     let targetUser = newUsers.find((item) => item.id === user.id);
-    let staffIndex = targetUser.staffs.indexOf(staff);
-    let targetUserIndex = newUsers.findIndex((item) => item.id === user.id);
-    let staffRoleIndex = targetUser.staffs[staffIndex].roles.findIndex(
-      (item: any) => item === role
+    let targetUserIndex = newUsers.findIndex(
+      (item) => item.id === targetUser.id
     );
-    targetUser.staffs[staffIndex].roles.splice(staffRoleIndex, 1);
+
+    targetUser.deniedRoles.push(role);
     newUsers.splice(targetUserIndex, 1);
     newUsers.push(targetUser);
 
     Axios.put(
       `/DenyStaffRole?id=${user.id}&staffId=${staff.id}&role=${role}`
+    ).then(() => {
+      setUsers(newUsers);
+    });
+  };
+
+  const handleAllowStaffRole = (user: any, staff: any, role: any) => {
+    let newUsers = [...users];
+    let targetUser = newUsers.find((item) => item.id === user.id);
+    let targetUserIndex = newUsers.findIndex(
+      (item) => item.id === targetUser.id
+    );
+    let deniedRoleIndex = targetUser.deniedRoles.findIndex(
+      (item: any) => item === role
+    );
+    targetUser.deniedRoles.splice(deniedRoleIndex, 1);
+    newUsers.splice(targetUserIndex, 1);
+    newUsers.push(targetUser);
+
+    Axios.post(
+      `/AllowStaffRole?id=${user.id}&staffId=${staff.id}&role=${role}`
     ).then(() => {
       setUsers(newUsers);
     });
@@ -304,19 +324,31 @@ export default function UserManager() {
                         className={classes.chip}
                       />
                     );
-                    staff.roles.map((role: any) =>
+                    staff.roles.map((role: any) => {
+                      let deny = false;
+                      if (user.deniedRoles.includes(role)) deny = true;
+
                       items.push(
                         <Chip
                           key={staff.name + "-" + role}
-                          color="primary"
+                          color={deny ? undefined : "primary"}
+                          deleteIcon={
+                            deny ? (
+                              <AddCircleIcon />
+                            ) : (
+                              <RemoveCircleOutlineIcon />
+                            )
+                          }
                           onDelete={() =>
-                            handleStaffRoleDelete(user, staff, role)
+                            deny
+                              ? handleAllowStaffRole(user, staff, role)
+                              : handleDenyStaffRole(user, staff, role)
                           }
                           label={role}
                           className={classes.chip}
                         />
-                      )
-                    );
+                      );
+                    });
                     return <div>{items}</div>;
                   })}
 
