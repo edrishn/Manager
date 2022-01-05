@@ -252,6 +252,14 @@ export default function UserManager() {
     setStaffs(matchedStaffs);
   };
 
+  const handleSearchUser = (e: any) => {
+    let newUsers = [...allUsers];
+    let matchedUsers = newUsers.filter((user: any) =>
+      user.name.toLowerCase().includes(e.currentTarget.value.toLowerCase())
+    );
+    setUsers(matchedUsers);
+  };
+
   const handleInviteClick = () => {
     setInviteResponse(null);
     setOpenModal(true);
@@ -309,6 +317,7 @@ export default function UserManager() {
       </Modal>
 
       <List>
+        <InputBase placeholder="Search for User" onChange={handleSearchUser} />
         {users.map((user: any) => {
           return (
             <ListItem key={user.name} className={classes.listItem}>
