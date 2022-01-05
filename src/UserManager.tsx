@@ -47,12 +47,38 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
   },
 }));
+let database = {
+  Role: [{ name: "Manager" }, { name: "Developer" }, { name: "Admin" }],
+  User: [
+    {
+      id: 1,
+      name: "Joe",
+      roles: ["Admin", "Developer"],
+      staffs: [{ id: 2, name: "Modir Fanni", roles: ["role1", "role3"] }],
+      deniedRoles: [],
+      mobile: "09351234567",
+    },
+    {
+      id: 2,
+      name: "Matthew",
+      roles: ["Manager"],
+      staffs: [{ id: 1, name: "Modir Mali", roles: ["role1", "role2"] }],
+      deniedRoles: ["role2"],
+      mobile: "09371234567",
+    },
+  ],
+  Staff: [
+    { id: 1, name: "Modir Mali", roles: ["role1", "role2"] },
+    { id: 2, name: "Modir Fanni", roles: ["role1", "role3"] },
+    { id: 3, name: "Modir ManabeEnsani", roles: ["role2", "role4"] },
+  ],
+};
 
 export default function UserManager() {
   const classes = useStyles();
 
   useEffect(() => {
-    Axios.get("/Reset").then((res) => {
+    Axios.post("/Reset", database).then((res) => {
       console.log("Reset");
       Axios.get("/GetUsers").then((res) => {
         setAllUsers(res.data);
