@@ -318,6 +318,9 @@ export default function UserManager() {
 
       <List>
         <InputBase placeholder="Search for User" onChange={handleSearchUser} />
+        <IconButton>
+          <SearchIcon />
+        </IconButton>
         {users.map((user: any) => {
           return (
             <ListItem key={user.name} className={classes.listItem}>
