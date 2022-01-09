@@ -20,6 +20,8 @@ import AddPopover from "./AddPopover";
 // import InviteNewUser from "./InviteNewUser";
 // import InviteResponse from "./InviteResponse";
 import { InviteResponse, InviteNewUser } from "./Invite";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -323,81 +325,85 @@ export default function UserManager() {
         </IconButton>
         {users.map((user: any) => {
           return (
-            <ListItem key={user.name} className={classes.listItem}>
-              <ListItemIcon>
-                <AccountCircleIcon />
-              </ListItemIcon>
-              <ListItemText
-                id={user.name}
-                primary={user.name}
-                className={classes.listItemText}
-              />
-              <div className={classes.roleBox}>
-                <div>
-                  {user.roles.map((role: string) => (
-                    <Chip
-                      key={role}
-                      color="primary"
-                      onDelete={() => handleRoleDelete(user, role)}
-                      label={role}
-                      className={classes.chip}
-                    />
-                  ))}
-
-                  {loadAddRole && (
-                    <IconButton onClick={(e) => handleAddRoleClick(e, user)}>
-                      <AddCircleIcon />
-                    </IconButton>
-                  )}
-                </div>
-                <div>
-                  {user.staffs.map((staff: any) => {
-                    let items = [];
-                    items.push(
-                      <Chip
-                        key={staff.name}
-                        color="secondary"
-                        onDelete={() => handleStaffDelete(user, staff)}
-                        label={staff.name}
-                        className={classes.chip}
-                      />
-                    );
-                    staff.roles.map((role: any) => {
-                      let deny = false;
-                      if (user.deniedRoles.includes(role)) deny = true;
-
-                      items.push(
+            <Card>
+              <CardContent>
+                <ListItem key={user.name} className={classes.listItem}>
+                  <ListItemIcon>
+                    <AccountCircleIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    id={user.name}
+                    primary={user.name}
+                    className={classes.listItemText}
+                  />
+                  <div className={classes.roleBox}>
+                    <div>
+                      {user.roles.map((role: string) => (
                         <Chip
-                          key={staff.name + "-" + role}
-                          color={deny ? undefined : "primary"}
-                          deleteIcon={
-                            deny ? (
-                              <AddCircleIcon />
-                            ) : (
-                              <RemoveCircleOutlineIcon />
-                            )
-                          }
-                          onDelete={() =>
-                            deny
-                              ? handleAllowStaffRole(user, staff, role)
-                              : handleDenyStaffRole(user, staff, role)
-                          }
+                          key={role}
+                          color="primary"
+                          onDelete={() => handleRoleDelete(user, role)}
                           label={role}
                           className={classes.chip}
                         />
-                      );
-                    });
-                    return <div>{items}</div>;
-                  })}
+                      ))}
 
-                  {loadAddStaff && (
-                    <IconButton onClick={(e) => handleAddStaffClick(e, user)}>
-                      <AddCircleIcon />
-                    </IconButton>
-                  )}
-                </div>
-              </div>
-            </ListItem>
+                      {loadAddRole && (
+                        <IconButton onClick={(e) => handleAddRoleClick(e, user)}>
+                          <AddCircleIcon />
+                        </IconButton>
+                      )}
+                    </div>
+                    <div>
+                      {user.staffs.map((staff: any) => {
+                        let items = [];
+                        items.push(
+                          <Chip
+                            key={staff.name}
+                            color="secondary"
+                            onDelete={() => handleStaffDelete(user, staff)}
+                            label={staff.name}
+                            className={classes.chip}
+                          />
+                        );
+                        staff.roles.map((role: any) => {
+                          let deny = false;
+                          if (user.deniedRoles.includes(role)) deny = true;
+
+                          items.push(
+                            <Chip
+                              key={staff.name + "-" + role}
+                              color={deny ? undefined : "primary"}
+                              deleteIcon={
+                                deny ? (
+                                  <AddCircleIcon />
+                                ) : (
+                                  <RemoveCircleOutlineIcon />
+                                )
+                              }
+                              onDelete={() =>
+                                deny
+                                  ? handleAllowStaffRole(user, staff, role)
+                                  : handleDenyStaffRole(user, staff, role)
+                              }
+                              label={role}
+                              className={classes.chip}
+                            />
+                          );
+                        });
+                        return <div>{items}</div>;
+                      })}
+
+                      {loadAddStaff && (
+                        <IconButton onClick={(e) => handleAddStaffClick(e, user)}>
+                          <AddCircleIcon />
+                        </IconButton>
+                      )}
+                    </div>
+                  </div>
+                </ListItem>
+              </CardContent>
+            </Card>
           );
         })}
 
