@@ -26,7 +26,7 @@ export default function AddPopover(props: any) {
         <List>
           {props.data.map((item: any) => {
             // if(typeof(item) === "object")
-            item = item.name;
+            item = item.Name;
             return (
               <ListItem
                 key={item}

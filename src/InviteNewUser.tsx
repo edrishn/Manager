@@ -48,7 +48,7 @@ export default function InviteNewUser(props: any) {
   const handleButtonClick = () => {
     let MobileNumber = "0" + codeValue + numberValue;
 
-    onChange({ Mobile: MobileNumber, Username: username });
+    onChange({ Mobile: MobileNumber, UserName: username });
   };
 
   return (
