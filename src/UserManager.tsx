@@ -53,26 +53,26 @@ let database = {
   Role: [{ Name: "Manager" }, { Name: "Developer" }, { Name: "Admin" }],
   User: [
     {
-      Id: 1,
+      ID: 1,
       Name: "Joe",
       Roles: ["Admin", "Developer"],
-      Staffs: [{ Id: 2, Name: "Modir Fanni", Roles: ["role1", "role3"] }],
+      Staffs: [{ ID: 2, Name: "Modir Fanni", Roles: ["role1", "role3"] }],
       DeniedRoles: [],
       Mobile: "09351234567",
     },
     {
-      Id: 2,
+      ID: 2,
       Name: "Matthew",
       Roles: ["Manager"],
-      Staffs: [{ Id: 1, Name: "Modir Mali", Roles: ["role1", "role2"] }],
+      Staffs: [{ ID: 1, Name: "Modir Mali", Roles: ["role1", "role2"] }],
       DeniedRoles: ["role2"],
       Mobile: "09371234567",
     },
   ],
   Staff: [
-    { Id: 1, Name: "Modir Mali", Roles: ["role1", "role2"] },
-    { Id: 2, Name: "Modir Fanni", Roles: ["role1", "role3"] },
-    { Id: 3, Name: "Modir ManabeEnsani", Roles: ["role2", "role4"] },
+    { ID: 1, Name: "Modir Mali", Roles: ["role1", "role2"] },
+    { ID: 2, Name: "Modir Fanni", Roles: ["role1", "role3"] },
+    { ID: 3, Name: "Modir ManabeEnsani", Roles: ["role2", "role4"] },
   ],
 };
 
@@ -124,26 +124,26 @@ export default function UserManager() {
 
   const handleRoleDelete = (user: any, role: any) => {
     let newUsers = [...users];
-    let targetUser = newUsers.find((item) => item.Id === user.Id);
-    let targetUserIndex = newUsers.findIndex((item) => item.Id === user.Id);
+    let targetUser = newUsers.find((item) => item.ID === user.ID);
+    let targetUserIndex = newUsers.findIndex((item) => item.ID === user.ID);
     let roleIndex = targetUser.Roles.indexOf(role);
     targetUser.Roles.splice(roleIndex, 1);
     newUsers.splice(targetUserIndex, 1);
     newUsers.push(targetUser);
 
-    Axios.put(`/RemoveUserRole?id=${user.Id}&role=${role}`).then(() => {
+    Axios.put(`/RemoveUserRole?id=${user.ID}&role=${role}`).then(() => {
       setUsers(newUsers);
     });
   };
 
   const handleRoleItemClick = (role: string, user: any) => {
     let newUsers = [...users];
-    let targetUser = newUsers.find((item) => item.Id === user.Id);
-    let targetUserIndex = newUsers.findIndex((item) => item.Id === user.Id);
+    let targetUser = newUsers.find((item) => item.ID === user.ID);
+    let targetUserIndex = newUsers.findIndex((item) => item.ID === user.ID);
     targetUser.Roles.push(role);
     newUsers.splice(targetUserIndex, 1);
     newUsers.push(targetUser);
-    Axios.post(`/AddUserRole?id=${user.Id}&role=${role}`).then(() => {
+    Axios.post(`/AddUserRole?id=${user.ID}&role=${role}`).then(() => {
       setUsers(newUsers);
       setSelectedUser(targetUser);
       setAnchorElRole(null);
@@ -161,22 +161,22 @@ export default function UserManager() {
 
   const handleStaffDelete = (user: any, staff: any) => {
     let newUsers = [...users];
-    let targetUser = newUsers.find((item) => item.Id === user.Id);
-    let targetUserIndex = newUsers.findIndex((item) => item.Id === user.Id);
+    let targetUser = newUsers.find((item) => item.ID === user.ID);
+    let targetUserIndex = newUsers.findIndex((item) => item.ID === user.ID);
     let staffIndex = targetUser.Staffs.indexOf(staff);
     targetUser.Staffs.splice(staffIndex, 1);
     newUsers.splice(targetUserIndex, 1);
     newUsers.push(targetUser);
-    Axios.put(`/RemoveUserStaff?id=${user.Id}&staffId=${staff.Id}`).then(() => {
+    Axios.put(`/RemoveUserStaff?id=${user.ID}&staffId=${staff.ID}`).then(() => {
       setUsers(newUsers);
     });
   };
 
   const handleDenyStaffRole = (user: any, staff: any, role: any) => {
     let newUsers = [...users];
-    let targetUser = newUsers.find((item) => item.Id === user.Id);
+    let targetUser = newUsers.find((item) => item.ID === user.ID);
     let targetUserIndex = newUsers.findIndex(
-      (item) => item.Id === targetUser.Id
+      (item) => item.ID === targetUser.ID
     );
 
     targetUser.DeniedRoles.push(role);
@@ -184,7 +184,7 @@ export default function UserManager() {
     newUsers.push(targetUser);
 
     Axios.put(
-      `/DenyStaffRole?id=${user.Id}&staffId=${staff.Id}&role=${role}`
+      `/DenyStaffRole?id=${user.ID}&staffId=${staff.ID}&role=${role}`
     ).then(() => {
       setUsers(newUsers);
     });
@@ -192,9 +192,9 @@ export default function UserManager() {
 
   const handleAllowStaffRole = (user: any, staff: any, role: any) => {
     let newUsers = [...users];
-    let targetUser = newUsers.find((item) => item.Id === user.Id);
+    let targetUser = newUsers.find((item) => item.ID === user.ID);
     let targetUserIndex = newUsers.findIndex(
-      (item) => item.Id === targetUser.Id
+      (item) => item.ID === targetUser.ID
     );
     let deniedRoleIndex = targetUser.DeniedRoles.findIndex(
       (item: any) => item === role
@@ -204,7 +204,7 @@ export default function UserManager() {
     newUsers.push(targetUser);
 
     Axios.post(
-      `/AllowStaffRole?id=${user.Id}&staffId=${staff.Id}&role=${role}`
+      `/AllowStaffRole?id=${user.ID}&staffId=${staff.ID}&role=${role}`
     ).then(() => {
       setUsers(newUsers);
     });
@@ -212,13 +212,13 @@ export default function UserManager() {
 
   const handleStaffItemClick = (staff: string, user: any) => {
     let newUsers = [...users];
-    let targetUser = newUsers.find((item) => item.Id === user.Id);
-    let targetUserIndex = newUsers.findIndex((item) => item.Id === user.Id);
+    let targetUser = newUsers.find((item) => item.ID === user.ID);
+    let targetUserIndex = newUsers.findIndex((item) => item.ID === user.ID);
     let targetStaff = allStaffs.find((item: any) => item.Name === staff);
     targetUser.Staffs.push(targetStaff);
     newUsers.splice(targetUserIndex, 1);
     newUsers.push(targetUser);
-    Axios.post(`/AddUserStaff?id=${user.Id}&staffId=${targetStaff!.Id}`).then(
+    Axios.post(`/AddUserStaff?id=${user.ID}&staffId=${targetStaff!.ID}`).then(
       () => {
         setSelectedUser(targetUser[0]);
         setUsers(newUsers);
@@ -248,7 +248,7 @@ export default function UserManager() {
       (staff: any) =>
         staff.Name.toLowerCase().includes(
           e.currentTarget.value.toLowerCase()
-        ) && !selectedUser.Staffs.find((item: any) => item.Id === staff.Id)
+        ) && !selectedUser.Staffs.find((item: any) => item.ID === staff.ID)
     );
     setStaffs(matchedStaffs);
   };
@@ -275,7 +275,7 @@ export default function UserManager() {
 
     Axios.post("/AddUser", data).then((response) => {
       let addedUser = {
-        Id: response.data.Id,
+        ID: response.data.ID,
         Name: newUser.UserName,
         Roles: [],
         Staffs: [],
