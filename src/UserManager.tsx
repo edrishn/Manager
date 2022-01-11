@@ -50,13 +50,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 let database = {
-  Role: [{ Name: "Manager" }, { Name: "Developer" }, { Name: "Admin" }],
+  Role: [
+    { Name: "Manager" },
+    { Name: "Developer" },
+    { Name: "Admin" },
+    { Name: "Designer" },
+    { Name: "Tester" },
+  ],
   User: [
     {
       ID: 1,
       Name: "Joe",
       Roles: ["Admin", "Developer"],
-      Staffs: [{ ID: 2, Name: "Modir Fanni", Roles: ["role1", "role3"] }],
+      Staffs: [{ ID: 2, Name: "Modir Fanni", Roles: ["Tester", "Manager"] }],
       DeniedRoles: [],
       Mobile: "09351234567",
     },
@@ -64,15 +70,15 @@ let database = {
       ID: 2,
       Name: "Matthew",
       Roles: ["Manager"],
-      Staffs: [{ ID: 1, Name: "Modir Mali", Roles: ["role1", "role2"] }],
-      DeniedRoles: ["role2"],
+      Staffs: [{ ID: 1, Name: "Modir Mali", Roles: ["Admin", "Tester"] }],
+      DeniedRoles: ["Admin"],
       Mobile: "09371234567",
     },
   ],
   Staff: [
-    { ID: 1, Name: "Modir Mali", Roles: ["role1", "role2"] },
-    { ID: 2, Name: "Modir Fanni", Roles: ["role1", "role3"] },
-    { ID: 3, Name: "Modir ManabeEnsani", Roles: ["role2", "role4"] },
+    { ID: 1, Name: "Modir Mali", Roles: ["Admin", "Tester"] },
+    { ID: 2, Name: "Modir Fanni", Roles: ["Tester", "Manager"] },
+    { ID: 3, Name: "Modir ManabeEnsani", Roles: ["Admin", "Manager"] },
   ],
 };
 
