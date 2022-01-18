@@ -62,7 +62,7 @@ let database = {
       ID: 1,
       Name: "Joe",
       Roles: ["Admin", "Developer"],
-      Staffs: [{ ID: 2, Name: "Modir Fanni", Roles: ["Tester", "Manager"] }],
+      Staffs: ["Modir Fanni"],
       DeniedRoles: [],
       Mobile: "09351234567",
     },
@@ -70,7 +70,7 @@ let database = {
       ID: 2,
       Name: "Matthew",
       Roles: ["Manager"],
-      Staffs: [{ ID: 1, Name: "Modir Mali", Roles: ["Admin", "Tester"] }],
+      Staffs: ["Modir Mali"],
       DeniedRoles: ["Admin"],
       Mobile: "09371234567",
     },
@@ -160,26 +160,32 @@ export default function UserManager() {
     setAnchorElStaff(event.currentTarget);
     setSelectedUser(user);
     let filteredStaffs = allStaffs.filter(
-      (staff: any) => !user.Staffs.includes(staff)
+      (staff: any) => !user.Staffs.includes(staff.Name)
     );
     setStaffs(filteredStaffs);
   };
 
-  const handleStaffDelete = (user: any, staff: any) => {
+  const handleStaffDelete = (user: any, staff: string) => {
     let newUsers = [...users];
+    let newStaffs = [...allStaffs];
+    let targetStaff = newStaffs.find((item) => item.Name === staff);
     let targetUser = newUsers.find((item) => item.ID === user.ID);
     let targetUserIndex = newUsers.findIndex((item) => item.ID === user.ID);
     let staffIndex = targetUser.Staffs.indexOf(staff);
     targetUser.Staffs.splice(staffIndex, 1);
     newUsers.splice(targetUserIndex, 1);
     newUsers.push(targetUser);
-    Axios.put(`/RemoveUserStaff?id=${user.ID}&staffId=${staff.ID}`).then(() => {
-      setUsers(newUsers);
-    });
+    Axios.put(`/RemoveUserStaff?id=${user.ID}&staffId=${targetStaff.ID}`).then(
+      () => {
+        setUsers(newUsers);
+      }
+    );
   };
 
-  const handleDenyStaffRole = (user: any, staff: any, role: any) => {
+  const handleDenyStaffRole = (user: any, staff: string, role: string) => {
     let newUsers = [...users];
+    let newStaffs = [...allStaffs];
+    let targetStaff = newStaffs.find((item) => item.Name === staff);
     let targetUser = newUsers.find((item) => item.ID === user.ID);
     let targetUserIndex = newUsers.findIndex(
       (item) => item.ID === targetUser.ID
@@ -190,14 +196,16 @@ export default function UserManager() {
     newUsers.push(targetUser);
 
     Axios.put(
-      `/DenyStaffRole?id=${user.ID}&staffId=${staff.ID}&role=${role}`
+      `/DenyStaffRole?id=${user.ID}&staffId=${targetStaff.ID}&role=${role}`
     ).then(() => {
       setUsers(newUsers);
     });
   };
 
-  const handleAllowStaffRole = (user: any, staff: any, role: any) => {
+  const handleAllowStaffRole = (user: any, staff: string, role: string) => {
     let newUsers = [...users];
+    let newStaffs = [...allStaffs];
+    let targetStaff = newStaffs.find((item) => item.Name === staff);
     let targetUser = newUsers.find((item) => item.ID === user.ID);
     let targetUserIndex = newUsers.findIndex(
       (item) => item.ID === targetUser.ID
@@ -210,7 +218,7 @@ export default function UserManager() {
     newUsers.push(targetUser);
 
     Axios.post(
-      `/AllowStaffRole?id=${user.ID}&staffId=${staff.ID}&role=${role}`
+      `/AllowStaffRole?id=${user.ID}&staffId=${targetStaff.ID}&role=${role}`
     ).then(() => {
       setUsers(newUsers);
     });
@@ -221,10 +229,10 @@ export default function UserManager() {
     let targetUser = newUsers.find((item) => item.ID === user.ID);
     let targetUserIndex = newUsers.findIndex((item) => item.ID === user.ID);
     let targetStaff = allStaffs.find((item: any) => item.Name === staff);
-    targetUser.Staffs.push(targetStaff);
+    targetUser.Staffs.push(staff);
     newUsers.splice(targetUserIndex, 1);
     newUsers.push(targetUser);
-    Axios.post(`/AddUserStaff?id=${user.ID}&staffId=${targetStaff!.ID}`).then(
+    Axios.post(`/AddUserStaff?id=${user.ID}&staffId=${targetStaff.ID}`).then(
       () => {
         setSelectedUser(targetUser[0]);
         setUsers(newUsers);
@@ -254,7 +262,7 @@ export default function UserManager() {
       (staff: any) =>
         staff.Name.toLowerCase().includes(
           e.currentTarget.value.toLowerCase()
-        ) && !selectedUser.Staffs.find((item: any) => item.ID === staff.ID)
+        ) && !selectedUser.Staffs.find((item: any) => item === staff.Name)
     );
     setStaffs(matchedStaffs);
   };
@@ -363,42 +371,47 @@ export default function UserManager() {
                       )}
                     </div>
                     <div>
-                      {user.Staffs.map((staff: any) => {
+                      {user.Staffs.map((staff: string) => {
+                        let newStaffs = [...allStaffs];
+                        let targetStaff = newStaffs.find(
+                          (item) => item.Name === staff
+                        );
                         let items = [];
                         items.push(
                           <Chip
-                            key={staff.Name}
+                            key={staff}
                             color="secondary"
                             onDelete={() => handleStaffDelete(user, staff)}
-                            label={staff.Name}
+                            label={staff}
                             className={classes.chip}
                           />
                         );
-                        staff.Roles.map((role: any) => {
-                          let deny = false;
-                          if (user.DeniedRoles.includes(role)) deny = true;
+                        targetStaff &&
+                          targetStaff.Roles.map((role: any) => {
+                            let deny = false;
+                            if (user.DeniedRoles.includes(role)) deny = true;
 
-                          items.push(
-                            <Chip
-                              key={staff.Name + "-" + role}
-                              color={deny ? undefined : "primary"}
-                              deleteIcon={
-                                deny ? (
-                                  <AddCircleIcon />
-                                ) : (
-                                  <RemoveCircleOutlineIcon />
-                                )
-                              }
-                              onDelete={() =>
-                                deny
-                                  ? handleAllowStaffRole(user, staff, role)
-                                  : handleDenyStaffRole(user, staff, role)
-                              }
-                              label={role}
-                              className={classes.chip}
-                            />
-                          );
-                        });
+                            items.push(
+                              <Chip
+                                key={staff + "-" + role}
+                                color={deny ? undefined : "primary"}
+                                deleteIcon={
+                                  deny ? (
+                                    <AddCircleIcon />
+                                  ) : (
+                                    <RemoveCircleOutlineIcon />
+                                  )
+                                }
+                                onDelete={() =>
+                                  deny
+                                    ? handleAllowStaffRole(user, staff, role)
+                                    : handleDenyStaffRole(user, staff, role)
+                                }
+                                label={role}
+                                className={classes.chip}
+                              />
+                            );
+                          });
                         return <div>{items}</div>;
                       })}
 
