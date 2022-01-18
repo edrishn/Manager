@@ -45,7 +45,11 @@
   },
   "devDependencies": {
     "miragejs": "^0.1.41",
+    "msw": "^0.36.4",
     "prettier": "^2.4.1"
+  },
+  "msw": {
+    "workerDirectory": "public"
   },
   "proxy": "https://sloy9.sse.codesandbox.io"
 }
