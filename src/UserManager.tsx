@@ -27,27 +27,27 @@ const useStyles = makeStyles((theme) => ({
   modal: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center"
   },
   paper: {
     backgroundColor: theme.palette.background.paper,
     border: "2px solid #000",
     boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
+    padding: theme.spacing(2, 4, 3)
   },
   chip: {
-    margin: 4,
+    margin: 4
   },
   listItem: {
-    alignItems: "start",
+    alignItems: "start"
   },
   listItemText: {
-    maxWidth: 250,
+    maxWidth: 250
   },
   roleBox: {
     display: "flex",
-    flexDirection: "column",
-  },
+    flexDirection: "column"
+  }
 }));
 let database = {
   Role: [
@@ -55,7 +55,7 @@ let database = {
     { Name: "Developer" },
     { Name: "Admin" },
     { Name: "Designer" },
-    { Name: "Tester" },
+    { Name: "Tester" }
   ],
   User: [
     {
@@ -64,7 +64,7 @@ let database = {
       Roles: ["Admin", "Developer"],
       Staffs: ["Modir Fanni"],
       DeniedRoles: [],
-      Mobile: "09351234567",
+      Mobile: "09351234567"
     },
     {
       ID: 2,
@@ -72,30 +72,34 @@ let database = {
       Roles: ["Manager"],
       Staffs: ["Modir Mali"],
       DeniedRoles: ["Admin"],
-      Mobile: "09371234567",
-    },
+      Mobile: "09371234567"
+    }
   ],
   Staff: [
     { ID: 1, Name: "Modir Mali", Roles: ["Admin", "Tester"] },
     { ID: 2, Name: "Modir Fanni", Roles: ["Tester", "Manager"] },
-    { ID: 3, Name: "Modir ManabeEnsani", Roles: ["Admin", "Manager"] },
-  ],
+    { ID: 3, Name: "Modir ManabeEnsani", Roles: ["Admin", "Manager"] }
+  ]
 };
 
 export default function UserManager() {
+  let serverURL = "https://cu6by.sse.codesandbox.io";
+  
+
   const classes = useStyles();
 
   useEffect(() => {
-    Axios.post("/Reset", database).then((res) => {
+    Axios.post(`${serverURL}/Reset`, database).then((res) => {
       console.log("Reset");
-      Axios.get("/GetUsers").then((res) => {
+      Axios.get(`${serverURL}/GetUsers`).then((res) => {
+        console.log(res);
         setAllUsers(res.data);
         setUsers(res.data);
-        Axios.get("/GetRoles").then((res) => {
+        Axios.get(`${serverURL}/GetRoles`).then((res) => {
           setRoles(res.data);
           setAllRoles(res.data);
           setLoadAddRole(true);
-          Axios.get("/GetStaffs").then((res) => {
+          Axios.get(`${serverURL}/GetStaffs`).then((res) => {
             setStaffs(res.data);
             setLoadAddStaff(true);
             setAllStaffs(res.data);
@@ -137,9 +141,11 @@ export default function UserManager() {
     newUsers.splice(targetUserIndex, 1);
     newUsers.push(targetUser);
 
-    Axios.put(`/RemoveUserRole?id=${user.ID}&role=${role}`).then(() => {
-      setUsers(newUsers);
-    });
+    Axios.put(`${serverURL}/RemoveUserRole?id=${user.ID}&role=${role}`).then(
+      () => {
+        setUsers(newUsers);
+      }
+    );
   };
 
   const handleRoleItemClick = (role: string, user: any) => {
@@ -149,11 +155,13 @@ export default function UserManager() {
     targetUser.Roles.push(role);
     newUsers.splice(targetUserIndex, 1);
     newUsers.push(targetUser);
-    Axios.post(`/AddUserRole?id=${user.ID}&role=${role}`).then(() => {
-      setUsers(newUsers);
-      setSelectedUser(targetUser);
-      setAnchorElRole(null);
-    });
+    Axios.post(`${serverURL}/AddUserRole?id=${user.ID}&role=${role}`).then(
+      () => {
+        setUsers(newUsers);
+        setSelectedUser(targetUser);
+        setAnchorElRole(null);
+      }
+    );
   };
 
   const handleAddStaffClick = (event: any, user: any) => {
@@ -175,11 +183,11 @@ export default function UserManager() {
     targetUser.Staffs.splice(staffIndex, 1);
     newUsers.splice(targetUserIndex, 1);
     newUsers.push(targetUser);
-    Axios.put(`/RemoveUserStaff?id=${user.ID}&staffId=${targetStaff.ID}`).then(
-      () => {
-        setUsers(newUsers);
-      }
-    );
+    Axios.put(
+      `${serverURL}/RemoveUserStaff?id=${user.ID}&staffId=${targetStaff.ID}`
+    ).then(() => {
+      setUsers(newUsers);
+    });
   };
 
   const handleDenyStaffRole = (user: any, staff: string, role: string) => {
@@ -196,7 +204,7 @@ export default function UserManager() {
     newUsers.push(targetUser);
 
     Axios.put(
-      `/DenyStaffRole?id=${user.ID}&staffId=${targetStaff.ID}&role=${role}`
+      `${serverURL}/DenyStaffRole?id=${user.ID}&staffId=${targetStaff.ID}&role=${role}`
     ).then(() => {
       setUsers(newUsers);
     });
@@ -218,7 +226,7 @@ export default function UserManager() {
     newUsers.push(targetUser);
 
     Axios.post(
-      `/AllowStaffRole?id=${user.ID}&staffId=${targetStaff.ID}&role=${role}`
+      `${serverURL}/AllowStaffRole?id=${user.ID}&staffId=${targetStaff.ID}&role=${role}`
     ).then(() => {
       setUsers(newUsers);
     });
@@ -232,13 +240,13 @@ export default function UserManager() {
     targetUser.Staffs.push(staff);
     newUsers.splice(targetUserIndex, 1);
     newUsers.push(targetUser);
-    Axios.post(`/AddUserStaff?id=${user.ID}&staffId=${targetStaff.ID}`).then(
-      () => {
-        setSelectedUser(targetUser[0]);
-        setUsers(newUsers);
-        setAnchorElStaff(null);
-      }
-    );
+    Axios.post(
+      `${serverURL}/AddUserStaff?id=${user.ID}&staffId=${targetStaff.ID}`
+    ).then(() => {
+      setSelectedUser(targetUser[0]);
+      setUsers(newUsers);
+      setAnchorElStaff(null);
+    });
   };
 
   const handlePopoverClose = () => {
@@ -287,14 +295,14 @@ export default function UserManager() {
   const handleInviteNewUserChange = (newUser: any) => {
     let data = { Name: newUser.UserName, Mobile: newUser.Mobile };
 
-    Axios.post("/AddUser", data).then((response) => {
+    Axios.post(`${serverURL}/AddUser`, data).then((response) => {
       let addedUser = {
         ID: response.data.ID,
         Name: newUser.UserName,
         Roles: [],
         Staffs: [],
         DeniedRoles: [],
-        Mobile: newUser.Mobile,
+        Mobile: newUser.Mobile
       };
       let newUsers = [...users];
       newUsers.push(addedUser);

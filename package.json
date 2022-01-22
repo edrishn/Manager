@@ -13,6 +13,7 @@
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "axios": "^0.21.1",
+    "msw": "0.36.5",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
@@ -51,5 +52,6 @@
   "msw": {
     "workerDirectory": "public"
   },
-  "proxy": "https://sloy9.sse.codesandbox.io"
+  "keywords": [],
+  "description": ""
 }
