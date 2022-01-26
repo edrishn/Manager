@@ -6,7 +6,7 @@ function App() {
   };
   return (
     <div className="App">
-      <UserManager />
+      <UserManager serverUrl="https://cu6by.sse.codesandbox.io" />
       {/*<InviteNewUser onChange={handleChange}/>*/}
     </div>
   );

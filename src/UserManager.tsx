@@ -68,8 +68,8 @@ let database = {
   ]
 };
 
-export default function UserManager() {
-  let serverURL = "https://cu6by.sse.codesandbox.io";
+export default function UserManager(props) {
+  let serverURL = props.serverUrl || "../Server/Services/Manager";
   
 
   const classes = useStyles();
