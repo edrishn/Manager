@@ -35,38 +35,6 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column"
   }
 }));
-let database = {
-  Role: [
-    { Name: "Manager" },
-    { Name: "Developer" },
-    { Name: "Admin" },
-    { Name: "Designer" },
-    { Name: "Tester" }
-  ],
-  User: [
-    {
-      ID: 1,
-      Name: "Joe",
-      Roles: ["Admin", "Developer"],
-      Staffs: ["Modir Fanni"],
-      DeniedRoles: [],
-      Mobile: "09351234567"
-    },
-    {
-      ID: 2,
-      Name: "Matthew",
-      Roles: ["Manager"],
-      Staffs: ["Modir Mali"],
-      DeniedRoles: ["Admin"],
-      Mobile: "09371234567"
-    }
-  ],
-  Staff: [
-    { ID: 1, Name: "Modir Mali", Roles: ["Admin", "Tester"] },
-    { ID: 2, Name: "Modir Fanni", Roles: ["Tester", "Manager"] },
-    { ID: 3, Name: "Modir ManabeEnsani", Roles: ["Admin", "Manager"] }
-  ]
-};
 
 export default function UserManager(props) {
   let serverURL = props.serverUrl || "../Server/Services/Manager";
@@ -75,24 +43,21 @@ export default function UserManager(props) {
   const classes = useStyles();
 
   useEffect(() => {
-    Axios.post(`${serverURL}/Reset`, database).then((res) => {
-      console.log("Reset");
-      Axios.get(`${serverURL}/GetUsers`).then((res) => {
-        console.log(res);
-        setAllUsers(res.data);
-        setUsers(res.data);
-        Axios.get(`${serverURL}/GetRoles`).then((res) => {
-          setRoles(res.data);
-          setAllRoles(res.data);
-          setLoadAddRole(true);
-          Axios.get(`${serverURL}/GetStaffs`).then((res) => {
-            setStaffs(res.data);
-            setLoadAddStaff(true);
-            setAllStaffs(res.data);
-          });
-        });
-      });
-    });
+	Axios.get(`${serverURL}/GetUsers`).then((res) => {
+	console.log(res);
+	setAllUsers(res.data);
+	setUsers(res.data);
+	Axios.get(`${serverURL}/GetRoles`).then((res) => {
+	  setRoles(res.data);
+	  setAllRoles(res.data);
+	  setLoadAddRole(true);
+	  Axios.get(`${serverURL}/GetStaffs`).then((res) => {
+		setStaffs(res.data);
+		setLoadAddStaff(true);
+		setAllStaffs(res.data);
+	  });
+	});
+	});
   }, []);
 
   const [users, setUsers] = useState([] as any);
