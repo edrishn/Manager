@@ -1,27 +1,13 @@
 import React, { useEffect, useState } from "react";
-import Chip from "@material-ui/core/Chip";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import {Chip, List, ListItem, ListItemIcon, ListItemText, IconButton, InputBase, Modal, Card, CardContent, Popover} from "@material-ui/core";
+import {AccountCircleIcon, AddCircleIcon, RemoveCircleOutlineIcon, SearchIcon,AddIcon} from "./Icons";
 // import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import AddCircleIcon from "@material-ui/icons/AddCircle";
-import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
-import IconButton from "@material-ui/core/IconButton";
-import Popover from "@material-ui/core/Popover";
-import SearchIcon from "@material-ui/icons/Search";
-import InputBase from "@material-ui/core/InputBase";
-import AddIcon from "@material-ui/icons/Add";
-import Modal from "@material-ui/core/Modal";
 import { makeStyles } from "@material-ui/core";
 import Axios from "axios";
 import AddPopover from "./AddPopover";
 // import InviteNewUser from "./InviteNewUser";
 // import InviteResponse from "./InviteResponse";
 import { InviteResponse, InviteNewUser } from "./Invite";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
 
 const useStyles = makeStyles((theme) => ({
   modal: {

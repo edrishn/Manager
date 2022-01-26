@@ -1,7 +1,5 @@
 import React, { useRef, useState } from "react";
-import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import Button from "@material-ui/core/Button";
+import {TextField, InputAdornment, Button} from "@material-ui/core";
 
 export function InviteNewUser(props: any) {
   const { onChange } = props;
