@@ -1,3 +1,3 @@
 import UserManager from "./src/UserManager";
 
-export {UserManager}
+export default UserManager;
